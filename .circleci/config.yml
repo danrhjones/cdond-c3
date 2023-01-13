@@ -50,11 +50,6 @@ jobs:
       - checkout
       - restore_cache:
           keys: [frontend-build]
-      # - run:
-      #     name: Install dependancies
-      #     command: |
-      #       cd frontend
-      #       npm ci
       - run:
           name: Tests
           command: |
@@ -71,11 +66,6 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      # - run:
-      #     name: Install dependancies
-      #     command: |
-      #       cd backend
-      #       npm ci
       - run:
           name: Tests
           command: |
