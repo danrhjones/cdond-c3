@@ -14,7 +14,7 @@
     "start:prod": "node dist/main.js",
     "start:hmr": "node dist/server",
     "lint": "tslint -p tsconfig.json -c tslint.json --fix",
-    "test": "jest --runInBand  --ci --reporters=jest-junit",
+    "test": "jest --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
@@ -74,7 +74,6 @@
     "@types/node": "^11.15.9",
     "@types/supertest": "^2.0.8",
     "jest": "^24.9.0",
-    "jest-junit": "^15.0.0",
     "nodemon": "^1.19.4",
     "prettier": "^1.19.1",
     "rimraf": "^2.6.2",
@@ -114,8 +113,5 @@
     ],
     "testEnvironment": "node",
     "verbose": false
-  },
-  "jest-junit":{
-    "output": "./test-results/junit/backend_results.xml"
   }
 }

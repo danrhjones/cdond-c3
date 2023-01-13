@@ -29,11 +29,11 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      # - run:
-      #     name: Install dependancies
-      #     command: |
-      #       cd backend
-      #       npm ci
+      - run:
+          name: Install dependancies
+          command: |
+            cd backend
+            npm ci
       - run:
           name: Back-end build
           command: |
@@ -50,22 +50,19 @@ jobs:
       - checkout
       - restore_cache:
           keys: [frontend-build]
-      # - run:
-      #     name: Install dependancies
-      #     command: |
-      #       cd frontend
-      #       npm ci
+      - run:
+          name: Install dependancies
+          command: |
+            cd frontend
+            npm ci
       - run:
           name: Tests
           command: |
-            mkdir -p ./test-results/junit
             cd frontend 
             npm run test
-      - store_artifacts:
-          path: ./test-results/junit
       - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+          paths: [frontend/node_modules]
+          key: frontend-build
                 
   test-backend:
     docker:
@@ -82,11 +79,8 @@ jobs:
       - run:
           name: Tests
           command: |
-            mkdir -p ./test-results/junit
             cd backend 
             npm run test
-      - store_artifacts:
-          path: ./test-results/junit
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
