@@ -69,10 +69,7 @@ jobs:
           command: |
             cd frontend 
             npm run test
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-build
-                
+
   test-backend:
     <<: *node-docker-image
     steps:
@@ -84,24 +81,28 @@ jobs:
           command: |
             cd backend 
             npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
 
-  # scan-frontend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
-
-  # scan-backend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
+  scan-frontend:
+    <<: *node-docker-image
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Run audit
+          command: |
+            cd frontend 
+            npm audit --audit-level=critical
+  scan-backend:
+    <<: *node-docker-image
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Run audit
+          command: |
+            cd backend 
+            npm audit --audit-level=critical
 
 
