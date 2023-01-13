@@ -116,5 +116,5 @@
   },
   "jest-junit":{
     "output": "./test-results/junit/backend_results.xml"
-  },
+  }
 }
