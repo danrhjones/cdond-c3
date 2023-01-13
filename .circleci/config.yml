@@ -58,8 +58,11 @@ jobs:
       - run:
           name: Tests
           command: |
+            mkdir -p ./test-results/junit
             cd backend 
             npm run test
+      - store_artifacts:
+          path: ./test-results/junit
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -79,8 +82,11 @@ jobs:
       - run:
           name: Tests
           command: |
+            mkdir -p ./test-results/junit
             cd backend 
             npm run test
+      - store_artifacts:
+          path: ./test-results/junit
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build

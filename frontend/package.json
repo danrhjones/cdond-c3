@@ -5,7 +5,7 @@
   "description": "A frontend boilerplate with React, Redux and Typescript",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --ci --reporters=jest-junit",
     "test:watch": "jest --watch",
     "pretest:cov": "npm run lint",
     "test:cov": "jest --coverage",
@@ -141,6 +141,9 @@
       "\\.(css|less)$": "identity-obj-proxy",
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js"
     }
+  },
+  "jest-junit":{
+    "output": "./test-results/junit/frontend_results.xml"
   },
   "homepage": "http://mywebsite.com/relativepath"
 }
