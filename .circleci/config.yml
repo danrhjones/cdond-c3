@@ -11,6 +11,7 @@ jobs:
       - run:
           name: Install dependancies
           command: |
+            cd frontend
             npm ci
       - run:
           name: Build front-end
@@ -31,6 +32,7 @@ jobs:
       - run:
           name: Install dependancies
           command: |
+            cd backend
             npm ci
       - run:
           name: Back-end build
