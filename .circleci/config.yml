@@ -16,6 +16,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
+            cd frontend
             npm run build
             exit 1
       - save_cache:
@@ -37,8 +38,9 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             npm run build
-             exit 1
+            cd backend 
+            npm run build
+            exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
