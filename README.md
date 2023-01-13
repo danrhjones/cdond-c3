@@ -1,4 +1,4 @@
-[![ecovate](https://circleci.com/gh/github/danrhjones/cdond-c3.svg?style=svg)](https://app.circleci.com/pipelines/github/github/danrhjones/cdond-c3)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/danrhjones/cdond-c3/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/danrhjones/cdond-c3/tree/main)
 
 
 We are archiving this repository because we do not want learners to push personal development to the current repository. If you have any issues or suggestions to make, feel free to:
