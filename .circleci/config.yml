@@ -1,8 +1,8 @@
 version: 2.1
 
-node-docker-image: &node-docker-image
-   docker:
-      - image: circleci/node:13.8.0
+# node-docker-image: &node-docker-image
+#    docker:
+#       - image: circleci/node:13.8.0
 jobs:
   build-frontend:
     docker:
