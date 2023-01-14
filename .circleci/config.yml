@@ -9,9 +9,9 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      - scan-frontend:
+      - audit-scan-frontend:
           requires: [build-frontend]
-      - scan-backend:
+      - audit-scan-backend:
           requires: [build-backend]
 
 node-docker-image: &node-docker-image
@@ -85,7 +85,7 @@ jobs:
             cd backend 
             npm run test
 
-  scan-frontend:
+  audit-scan-frontend:
     <<: *node-docker-image
     steps:
       - checkout
@@ -97,7 +97,7 @@ jobs:
             cd frontend 
             npm audit --audit-level=critical
 
-  scan-backend:
+  audit-scan-backend:
     <<: *node-docker-image
     steps:
       - checkout
