@@ -2,21 +2,21 @@
   - name: "Package upgrade"
     become: true
     package:
-      upgrade: "yes"
+      upgrade: true
 
   - name: "install packages"
     become: true
     package:
       name: ["nodejs", "npm"]
       state: latest
-      update_cache: yes
+      update_cache: true
 
-  - name: "install n"
+ - name: "install n"
     become: true
     npm:
       name: n
-      global: yes
-      production: yes
+      global: true
+      production: true
 
   - name: "install correct nodejs version: 13.8.0"
     become: true
@@ -24,8 +24,8 @@
 
   - name: "install pm2"
     become: true
-    package:
+    npm:
       name: pm2
-      global: yes
-      production: yes
-      state: present
+      global: true
+      production: true
+      state: present 
