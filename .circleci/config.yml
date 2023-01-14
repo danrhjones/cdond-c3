@@ -18,6 +18,8 @@ workflows:
       #     requires: [build-backend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend]
+      - configure-infrastructure:
+          requires: ["deploy-infrastructure"]
 
 node-docker-image: &node-docker-image
    docker:
@@ -26,6 +28,10 @@ node-docker-image: &node-docker-image
 aws-docker-image: &aws-docker-image
    docker:
       - image: cimg/aws:2022.11
+
+ansible-docker-image: &ansible-docker-image
+   docker:
+      - image: cimg/deploy:2022.11.1
 
 commands:
   notify-slack:
@@ -163,3 +169,34 @@ jobs:
           paths:
           - project/.circleci/ansible/inventory.txt
       - notify-slack
+
+  configure-infrastructure:
+    <<: *ansible-docker-image
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            ansible --version
+            exit 1
+      - run:
+          name: Configure server
+          command: |
+            echo ENVIRONMENT=production > backend/.env
+            echo TYPEORM_CONNECTION=postgres >> backend/.env
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> backend/.env
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> backend/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env" 
+            cat backend/.env
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+            exit 1
