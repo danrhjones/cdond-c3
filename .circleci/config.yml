@@ -179,11 +179,6 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Install dependencies
-          command: |
-            ansible --version
-            exit 1
-      - run:
           name: Configure server
           command: |
             echo ENVIRONMENT=production > backend/.env
