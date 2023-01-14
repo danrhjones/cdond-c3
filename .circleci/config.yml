@@ -132,7 +132,7 @@ jobs:
       - notify-slack
 
   deploy-infrastructure:
-    <<: *node-docker-image
+    <<: *aws-docker-image
     steps:
       - checkout
       - run:
