@@ -194,4 +194,4 @@ jobs:
             cat backend/.env
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-            exit 1
+      - notify-slack
