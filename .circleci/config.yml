@@ -173,8 +173,7 @@ jobs:
       - notify-slack
 
   configure-infrastructure:
-    docker:
-      - image: python:3.7-alpine3.11
+    <<: *ansible-docker-image
     steps:
       - checkout
       - add_ssh_keys:
