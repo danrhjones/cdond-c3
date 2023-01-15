@@ -181,11 +181,6 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: check if installed
-          command: |
-            ansible --version
-            cat .circleci/ansible/inventory.txt
-      - run:
           name: Configure server
           command: |
             echo ENVIRONMENT=production > "backend/.env"
@@ -211,6 +206,17 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            echo ENVIRONMENT=production > "backend/.env"
+            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo NODE_ENV=production >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd backend
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
@@ -220,7 +226,7 @@ jobs:
             if grep -q "success" ~/project/backend/migrations_dump.txt
             then
               echo "that worked"
-              # curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID}  -d  '1'
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID}  -d  '1'
             else
               exit 1
             fi
