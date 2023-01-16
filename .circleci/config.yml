@@ -22,6 +22,8 @@ workflows:
           requires: ["deploy-infrastructure"]
       - run-migrations:
           requires: ["configure-infrastructure"]
+      - deploy-frontend:
+          requires: ["run-migrations"]
 
 node-docker-image: &node-docker-image
    docker:
@@ -225,4 +227,28 @@ jobs:
             else
               exit 1
             fi
+      - notify-slack
+
+  deploy-frontend:
+    <<: *aws-docker-image
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(sed -n 2p .circleci/ansible/inventory.txt)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            cat .env
+            npm run build
+      - run:
+          name: Deploy frontend objects
+          command: |
+            aws s3 cp --recursive frontend/dist "s3://udapeople-danudacity456"
       - notify-slack
