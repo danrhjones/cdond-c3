@@ -86,13 +86,14 @@ jobs:
           command: |
             cd backend 
             npm run build
+            tar -czf backend-artifact.tar.gz dist/* package*
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - save_cache:
-         paths:
-           - "dist/"
-         key: build-dist
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/backend-artifact.tar.gz
 
   test-frontend:
     <<: *node-docker-image
@@ -171,6 +172,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
+              --filters "Name=backend-${CIRCLE_WORKFLOW_ID} \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
             echo `cat .circleci/ansible/inventory.txt`
@@ -271,8 +273,8 @@ jobs:
           fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys: [backend-build]
+      # - restore_cache:
+      #     keys: [backend-build]
       - restore_cache:
           keys: [build-dist]
       - run:
@@ -280,7 +282,8 @@ jobs:
           command: |
             cd backend
             # npm run build
-            tar -czf backend-artifact.tar.gz dist/* package*
+            # tar -czf backend-artifact.tar.gz dist/* package*
+            ls -lt
             cp ../backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
