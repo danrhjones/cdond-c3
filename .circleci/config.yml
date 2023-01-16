@@ -278,13 +278,9 @@ jobs:
       - restore_cache:
           keys: [build-dist]
       - run:
-          name: build backend
+          name: copy artifact for ansible
           command: |
-            cd backend
-            # npm run build
-            # tar -czf backend-artifact.tar.gz dist/* package*
-            ls -lt
-            cp ../backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cp ../../backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
           command: |
