@@ -89,6 +89,10 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - save_cache:
+         paths:
+           - "dist/"
+         key: build-dist
 
   test-frontend:
     <<: *node-docker-image
@@ -267,11 +271,13 @@ jobs:
           fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [backend-build, build-dist]
       - run:
           name: build backend
           command: |
             cd backend
-            npm run build
+            # npm run build
             tar -czf backend-artifact.tar.gz dist/* package*
             cp ../backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
