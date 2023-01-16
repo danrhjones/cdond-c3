@@ -229,8 +229,11 @@ jobs:
           command: |
             if grep -q "success" ~/project/backend/migrations_dump.txt
             then
-              echo "that worked"
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID}  -d  '1'
+            elif grep -q "No migrations are pending" ~/project/backend/migrations_dump.txt
+            then
+              echo "No migrations are pending"
             else
               exit 1
             fi
+      - notify-slack
