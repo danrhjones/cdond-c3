@@ -256,3 +256,24 @@ jobs:
           command: |
             aws s3 cp --recursive frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID}"
       - notify-slack
+
+  deploy-backend:
+    <<: *ansible-docker-image
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: build backend
+          command: |
+            cd backend
+            npm run build
+            tar -czf backend-artifact.tar.gz dist/* package*
+            cp ../backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+              cat .circleci/ansible/inventory.txt
+              ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
