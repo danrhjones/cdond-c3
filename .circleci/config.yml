@@ -53,9 +53,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - frontend-build-{{ checksum "package-lock.json" }}
-            - frontend-build-
+          keys: [frontend-build]
       - run:
           name: Install dependancies
           command: |
@@ -67,9 +65,8 @@ jobs:
             cd frontend
             npm run build
       - save_cache:
-          key: frontend-build-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/project/frontend
+          paths: [frontend/node_modules]
+          key: frontend-build
       - notify-slack
 
   build-backend:
@@ -78,9 +75,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - frontend-build-{{ checksum "package-lock.json" }}
-            - frontend-build-
+          keys: [backend-build]
       - run:
           name: Install dependancies
           command: |
@@ -93,11 +88,8 @@ jobs:
             npm run build
             tar -czf backend-artifact.tar.gz dist/* package*
       - save_cache:
-          key: backend-build-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/project/backend
-            - ~/project/dist
-            - ~/project/backend-artifact.tar.gz
+          paths: [backend/node_modules]
+          key: backend-build
       - persist_to_workspace:
           root: .
           paths:
@@ -108,9 +100,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - frontend-build-{{ checksum "package-lock.json" }}
-            - frontend-build-
+          keys: [frontend-build]
       - run:
           name: Tests
           command: |
@@ -124,9 +114,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - backend-build-{{ checksum "package-lock.json" }}
-            - backend-build-
+          keys: [backend-build]
       - run:
           name: Tests
           command: |
@@ -139,9 +127,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - frontend-build-{{ checksum "package-lock.json" }}
-            - frontend-build-
+          keys: [frontend-build]
       - run:
           name: Run audit
           command: |
@@ -154,9 +140,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - backend-build-{{ checksum "package-lock.json" }}
-            - backend-build-
+          keys: [backend-build]
       - run:
           name: Run audit
           command: |
@@ -217,9 +201,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - backend-build-{{ checksum "package-lock.json" }}
-            - backend-build-
+          keys: [backend-build]
       - run:
           name: add config
           command: |
@@ -260,9 +242,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - frontend-build-{{ checksum "package-lock.json" }}
-            - frontend-build-
+          keys: [frontend-build]
       - run:
           name: Get backend url
           command: |
@@ -294,9 +274,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - restore_cache:
-          keys:
-            - backend-build-{{ checksum "package-lock.json" }}
-            - backend-build-
+          keys: [build-dist]
       - run:
           name: copy artifact for ansible
           command: |
