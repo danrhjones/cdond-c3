@@ -69,7 +69,7 @@ jobs:
       - save_cache:
           key: frontend-build-{{ checksum "package-lock.json" }}
           paths:
-            - ~/cdond-c3/frontend
+            - ~/project/frontend
       - notify-slack
 
   build-backend:
@@ -95,9 +95,9 @@ jobs:
       - save_cache:
           key: backend-build-{{ checksum "package-lock.json" }}
           paths:
-            - ~/cdond-c3/backend
-            - ~/cdond-c3/dist
-            - ~/cdond-c3/backend-artifact.tar.gz
+            - ~/project/backend
+            - ~/project/dist
+            - ~/project/backend-artifact.tar.gz
       - persist_to_workspace:
           root: .
           paths:
