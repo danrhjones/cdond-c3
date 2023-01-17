@@ -280,7 +280,8 @@ jobs:
       - run:
           name: copy artifact for ansible
           command: |
-            cp ../../backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            pwd
+            cp ../../backend/backend-artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
           command: |
