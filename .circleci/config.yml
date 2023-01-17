@@ -269,12 +269,17 @@ jobs:
     <<: *ansible-docker-image
     steps:
       - checkout
+      - run:
+          name: Install NodeJS 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash - 
+            sudo apt install -y nodejs
       - add_ssh_keys:
           fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
       - attach_workspace:
           at: ~/
-      # - restore_cache:
-      #     keys: [build-dist]
+      - restore_cache:
+          keys: [build-dist]
       - run:
           name: copy artifact for ansible
           command: |
@@ -295,5 +300,9 @@ jobs:
             # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             # cat backend/.env
+            cd backend
+            npm install
+            npm run build
+            cd ..
             cat .circleci/ansible/inventory.txt
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
