@@ -272,7 +272,7 @@ jobs:
       - run:
           name: Install NodeJS 13
           command: |
-            # sudo apt update
+            sudo apt update || true
             sudo apt install nodejs
             sudo apt install npm
             node --version
