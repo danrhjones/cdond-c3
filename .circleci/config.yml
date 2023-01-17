@@ -273,8 +273,6 @@ jobs:
           fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
       - attach_workspace:
           at: ~/
-      # - restore_cache:
-      #     keys: [backend-build]
       - restore_cache:
           keys: [build-dist]
       - run:
@@ -285,5 +283,5 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-              cat .circleci/ansible/inventory.txt
-              ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+            cat .circleci/ansible/inventory.txt
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
