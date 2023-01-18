@@ -28,6 +28,8 @@ workflows:
           requires: ["run-migrations"]
       - smoke-test:
           requires: ["deploy-backend"]
+      - cloudfront-update:
+          requires: ["smoke-test"]
 
 node-docker-image: &node-docker-image
    docker:
@@ -368,7 +370,7 @@ jobs:
           command: |
             export URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com/#/employees"
             echo $URL
-            if curl ${URL} | grep "fail test";
+            if curl ${URL} | grep "Welcome";
             then
               echo "Frontend is not reachable"
               exit 0;
@@ -378,3 +380,26 @@ jobs:
       - notify-slack
       - destroy-environment
       - revert-migrations
+
+  cloudfront-update:
+    <<: *aws-docker-image
+    steps:
+      - checkout
+      - run:
+          name: Save existing Workflow ID to kvdb.io
+          command: |
+            export EXISTING_WORKFLOW_ID=$(aws cloudformation \
+                      list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                      --no-paginate --output text)
+            echo "existing Wokflow ID: $EXISTING_WORKFLOW_ID"
+            curl --insecure https://kvdb.io/${KVDB_BUCKET}/existing_workflow_id -d "${EXISTING_WORKFLOW_ID}"
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --stack-name udapeople-cloudfront
+      - notify-slack
+      - destroy-environment
+      - revert-migrations 
