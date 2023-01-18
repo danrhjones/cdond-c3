@@ -396,12 +396,10 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
-            aws cloudformation update-stack 
-            --use-previous-template \
+            aws cloudformation update-stack \
             --stack-name ProductionStack \
+            --use-previous-template \
             --parameters ParameterKey=WorkflowID,ParameterValue=$CIRCLE_WORKFLOW_ID,UsePreviousValue=false
-
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
       - notify-slack
       - destroy-environment
       - revert-migrations
