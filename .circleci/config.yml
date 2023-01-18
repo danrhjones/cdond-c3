@@ -49,6 +49,33 @@ commands:
           channel: general
           template: basic_fail_1
 
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks by workflow ID.
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name "n-udacity-backend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
+            aws cloudformation delete-stack --stack-name "n-udacity-frontend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
+            aws s3 rm --recursive s3://udapeople-${CIRCLE_WORKFLOW_ID}
+
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID})
+            if (( $SUCCESS == 1 ));
+            then
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
+              echo "Migrations successfully reverted"
+            fi
+
 jobs:
   build-frontend:
     <<: *node-docker-image
@@ -183,6 +210,7 @@ jobs:
           paths:
           - project/.circleci/ansible/inventory.txt
       - notify-slack
+      - destroy-environment
 
   configure-infrastructure:
     <<: *ansible-docker-image
@@ -197,6 +225,7 @@ jobs:
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - notify-slack
+      - destroy-environment
 
   run-migrations:
     <<: *node-docker-image
@@ -238,6 +267,7 @@ jobs:
               exit 1
             fi
       - notify-slack
+      - destroy-environment
 
   deploy-frontend:
     <<: *aws-docker-image
@@ -266,6 +296,8 @@ jobs:
           command: |
             aws s3 cp --recursive frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID}"
       - notify-slack
+      - destroy-environment
+      - revert-migrations
 
   deploy-backend:
     <<: *ansible-docker-image
@@ -308,6 +340,8 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       - notify-slack
+      - destroy-environment
+      - revert-migrations
 
   smoke-test:
     <<: *aws-docker-image
@@ -342,3 +376,5 @@ jobs:
               exit 1;
             fi
       - notify-slack
+      - destroy-environment
+      - revert-migrations
