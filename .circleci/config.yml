@@ -88,12 +88,12 @@ jobs:
             npm run build
             tar -czf backend-artifact.tar.gz dist/* package*
       - save_cache:
-          paths: [backend/node_modules]
+          paths: [backend]
           key: backend-build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/backend-artifact.tar.gz
+      # - persist_to_workspace:
+      #     root: .
+      #     paths:
+      #       - backend/backend-artifact.tar.gz
 
   test-frontend:
     <<: *node-docker-image
@@ -279,8 +279,8 @@ jobs:
             npm --version
       - add_ssh_keys:
           fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
-      - attach_workspace:
-          at: ~/
+      # - attach_workspace:
+      #     at: ~/
       - restore_cache:
           keys: [build-dist]
       - run:
