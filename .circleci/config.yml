@@ -398,7 +398,7 @@ jobs:
           command: |
             aws cloudformation update-stack --template-file .circleci/files/cloudfront.yml \
             --stack-name ProductionStack \
-            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+            --parameters ParameterKey=WorkflowID,ParameterValue=$CIRCLE_WORKFLOW_ID,UsePreviousValue=false
 
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
       - notify-slack
