@@ -398,7 +398,7 @@ jobs:
           command: |
             aws cloudformation deploy  \
               --template-file .circleci/files/cloudfront.yml \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}" \
               --stack-name udapeople-cloudfront-stack
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
