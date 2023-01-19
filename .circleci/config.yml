@@ -21,6 +21,8 @@ workflows:
           filters:
             branches:
               only: [main]
+      - add-prometheus-node-exporter:
+          requires: [deploy-infrastructure]
       - configure-infrastructure:
           requires: ["deploy-infrastructure"]
       - run-migrations:
@@ -126,10 +128,6 @@ jobs:
       - save_cache:
           paths: [backend]
           key: backend-build
-      # - persist_to_workspace:
-      #     root: .
-      #     paths:
-      #       - backend/backend-artifact.tar.gz
 
   test-frontend:
     <<: *node-docker-image
@@ -428,3 +426,28 @@ jobs:
               aws cloudformation delete-stack --stack-name "udacity-frontend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udacity-backend-${OldWorkflowID}"
             fi
+
+  add-prometheus-node-exporter:
+    <<: *ansible-docker-image
+    steps:
+      - checkout
+      - run:
+          name: Install NodeJS 13
+          command: |
+            sudo apt update || true
+            sudo apt install nodejs
+            sudo apt install npm
+            node --version
+            npm --version
+      - add_ssh_keys:
+          fingerprints: ["f5:53:f8:3c:70:25:6b:3c:50:89:14:d7:5e:98:d9:53"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Setup Prometheus Node Exporter
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt node-exporter.yml
+      - destroy-environment
+      - revert-migrations
