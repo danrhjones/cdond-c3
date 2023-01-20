@@ -262,11 +262,12 @@ jobs:
             cd backend
             npm run migrations
             MIGRATIONS=$(npm run migrations)
+            echo $MIGRATIONS
       - run:
           name: Send migration status to kvdb.io
           command: |
             echo $MIGRATIONS
-            if grep -q "has been executed successfully" ${MIGRATIONS}; then
+            if grep "successfully" <<< ${MIGRATIONS}; then
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
             else
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "failure"
