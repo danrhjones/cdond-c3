@@ -82,6 +82,7 @@ commands:
             if [ ${STATUS} == "failure" ];
             then
               cd ~/project/backend
+              npm install
               npm run migrations:revert
             fi
 
