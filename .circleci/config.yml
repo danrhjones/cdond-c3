@@ -266,7 +266,7 @@ jobs:
           name: Send migration status to kvdb.io
           command: |
             echo $MIGRATIONS
-            if grep -q "has been executed successfully" ${MIGRATIONS; then
+            if grep -q "has been executed successfully" ${MIGRATIONS}; then
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
             else
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "failure"
