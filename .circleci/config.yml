@@ -78,12 +78,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID})
-            echo $SUCCESS
-            if (( $SUCCESS == "Not Found" ));
-            then
-              "No migrations to revert"
-              exit 0
-            elif (( $SUCCESS == 1 ));
+            if (( $SUCCESS != "Found" ));
             then
               pwd
               ls -lt
@@ -91,6 +86,9 @@ commands:
               npm install
               npm run migration:revert
               echo "Migrations successfully reverted"
+            else
+              "No migrations to revert"
+              exit 0
             fi
 
 jobs:
