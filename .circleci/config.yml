@@ -267,8 +267,13 @@ jobs:
           command: |
             echo $MIGRATIONS
             if grep -q "successfully" ${MIGRATIONS}; then
+              echo "success"
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
+            elif  grep -q "pending" ${MIGRATIONS}; then
+              echo "none pending"
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
             else
+              echo "fail"
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "failure"
             fi
       - notify-slack
