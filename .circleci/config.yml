@@ -77,18 +77,13 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID})
-            if (( $SUCCESS != "Found " ));
+            SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status)
+            echo $SUCCESS
+            if [ ${SUCCESS} = "success" ];
             then
-              pwd
-              ls -lt
               cd ~/project/backend
               npm install
-              npm run migration:revert
-              echo "Migrations successfully reverted"
-            else
-              "No migrations to revert"
-              exit 0
+              npm run migrations:revert
             fi
 
 jobs:
@@ -265,19 +260,16 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt
+            npm run migrations
+            MIGRATIONS=$(npm run migrations)
       - run:
           name: Send migration status to kvdb.io
           command: |
-            if grep -q "success" ~/project/backend/migrations_dump.txt
-            then
-              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID}  -d  '1'
-            elif grep -q "No migrations are pending" ~/project/backend/migrations_dump.txt
-            then
-              echo "No migrations are pending"
+            echo $MIGRATIONS
+            if grep -q "has been executed successfully" ${MIGRATIONS; then
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
             else
-              exit 1
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "failure"
             fi
       - notify-slack
       - destroy-environment
