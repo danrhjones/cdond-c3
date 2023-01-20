@@ -259,6 +259,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            exit 1
             cd backend
             MIGRATIONS=$(npm run migrations)
             echo $MIGRATIONS
