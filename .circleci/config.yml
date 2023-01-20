@@ -78,7 +78,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID})
-            if (( $SUCCESS != "Found" ));
+            if (( $SUCCESS != "Found " ));
             then
               pwd
               ls -lt
