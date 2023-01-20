@@ -78,12 +78,13 @@ commands:
           when: on_fail
           command: |
             STATUS=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status)
-            echo $STATUS
-            if [ ${STATUS} == "failure" ];
+            if [ ${STATUS} == "migrated" ];
             then
               cd ~/project/backend
               npm install
               npm run migrations:revert
+            else
+              echo "No migrations to revert"
             fi
 
 jobs:
@@ -267,15 +268,12 @@ jobs:
           name: Send migration status to kvdb.io
           command: |
             echo $MIGRATIONS
-            if grep -q "successfully" ${MIGRATIONS}; then
+            if grep -q "has been executed successfully" ${MIGRATIONS}; then
               echo "success"
-              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
-            elif  grep -q "pending" ${MIGRATIONS}; then
-              echo "none pending"
-              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "success"
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "migrated"
             else
               echo "fail"
-              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "failure"
+              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "ignore"
             fi
       - notify-slack
       - destroy-environment
