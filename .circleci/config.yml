@@ -65,7 +65,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            sudo apt-get update
+            sudo apt update || true
             sudo apt-get install awscli
             aws
 
