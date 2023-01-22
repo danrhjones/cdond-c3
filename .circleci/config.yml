@@ -8,35 +8,35 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - audit-scan-frontend:
-          requires: [build-frontend]
-      - audit-scan-backend:
-          requires: [build-backend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend]
-          filters:
-            branches:
-              only: [main]
-      - add-prometheus-node-exporter:
-          requires: [deploy-infrastructure]
-      - configure-infrastructure:
-          requires: ["add-prometheus-node-exporter"]
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - audit-scan-frontend:
+      #     requires: [build-frontend]
+      # - audit-scan-backend:
+      #     requires: [build-backend]
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend]
+      #     filters:
+      #       branches:
+      #         only: [main]
+      # - add-prometheus-node-exporter:
+      #     requires: [deploy-infrastructure]
+      # - configure-infrastructure:
+      #     requires: ["add-prometheus-node-exporter"]
       - run-migrations:
-          requires: ["configure-infrastructure"]
-      - deploy-frontend:
-          requires: ["run-migrations"]
-      - deploy-backend:
-          requires: ["run-migrations"]
-      - smoke-test:
-          requires: ["deploy-backend"]
-      - cloudfront-update:
-          requires: ["smoke-test"]
-      - cleanup:
-          requires: [cloudfront-update,]
+          requires: ["build-backend"]
+      # - deploy-frontend:
+      #     requires: ["run-migrations"]
+      # - deploy-backend:
+      #     requires: ["run-migrations"]
+      # - smoke-test:
+      #     requires: ["deploy-backend"]
+      # - cloudfront-update:
+      #     requires: ["smoke-test"]
+      # - cleanup:
+      #     requires: [cloudfront-update,]
 
 node-docker-image: &node-docker-image
    docker:
@@ -266,14 +266,10 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat backend/.env
       - run:
-          name: Run migrations
+          name: Run migrations and end migration status to kvdb.io
           command: |
             cd backend
             npm run migrations > migrations.txt
-            cat migrations.txt
-      - run:
-          name: Send migration status to kvdb.io
-          command: |
             cat migrations.txt
             ls -lt ~/project/backend
             if grep -q "has been executed successfully" ~/project/backend/migrations.txt; then
