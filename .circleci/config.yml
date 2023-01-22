@@ -74,9 +74,14 @@ commands:
             #   sudo apt-get update
             #   sudo apt-get --yes install $REQUIRED_PKG
             # fi
-            aws cloudformation delete-stack --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
-            aws cloudformation delete-stack --stack-name "udacity-frontend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
-            aws s3 rm --recursive s3://udapeople-${CIRCLE_WORKFLOW_ID}
+
+            if [ -n "$(dpkg -l | awk "/^ii  "awscli")" ]; then
+              echo "nope";
+            fi
+
+            # # aws cloudformation delete-stack --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
+            # aws cloudformation delete-stack --stack-name "udacity-frontend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
+            # aws s3 rm --recursive s3://udapeople-${CIRCLE_WORKFLOW_ID}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -253,32 +258,7 @@ jobs:
       - run:
           name: add config
           command: |
-            echo ENVIRONMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            cat backend/.env
-      - run:
-          name: Run migrations and end migration status to kvdb.io
-          command: |
-            cd backend
-            npm run migrations > migrations.txt
-            cat migrations.txt
-            ls -lt ~/project/backend
-            if grep -q "has been executed successfully" ~/project/backend/migrations.txt; then
-              echo "success"
-              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "migrated"
-            else
-              echo "fail"
-              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "ignore"
-            fi
+            exit 1
       - notify-slack
       - destroy-environment
 
