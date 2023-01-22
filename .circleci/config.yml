@@ -346,7 +346,6 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-            exit 1
       - notify-slack
       - destroy-environment
       - revert-migrations
