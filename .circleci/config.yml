@@ -65,19 +65,9 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            # install AWS cli if docker image used doesn't have it installed
-            # REQUIRED_PKG="awscli"
-            # PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
-            # echo Checking for $REQUIRED_PKG: $PKG_OK
-            # if [ "" = "$PKG_OK" ]; then
-            #   echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG."
-            #   sudo apt-get update
-            #   sudo apt-get --yes install $REQUIRED_PKG
-            # fi
-
-            if [ -n "$(dpkg -l | awk "/^ii  "awscli")" ]; then
-              echo "nope";
-            fi
+            sudo apt-get update
+            sudo apt-get install awscli
+            aws
 
             # # aws cloudformation delete-stack --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
             # aws cloudformation delete-stack --stack-name "udacity-frontend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
