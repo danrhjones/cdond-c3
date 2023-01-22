@@ -365,9 +365,9 @@ jobs:
             echo $API_URL
             if curl --connect-timeout 5 "${API_URL}/api/status" | grep "ok"; 
             then
-              echo "Backend is not reachable"
               exit 0;
             else
+              echo "Backend is not reachable"
               exit 1;
             fi
       - run:
@@ -377,9 +377,9 @@ jobs:
             echo $URL
             if curl ${URL} | grep "Welcome";
             then
-              echo "Frontend is not reachable"
               exit 0;
             else
+              echo "Frontend is not reachable"
               exit 1;
             fi
       - notify-slack
