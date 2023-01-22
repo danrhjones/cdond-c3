@@ -273,6 +273,7 @@ jobs:
               echo "fail"
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "ignore"
             fi
+            exit 1
       - notify-slack
       - destroy-environment
 
