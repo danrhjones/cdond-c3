@@ -71,6 +71,7 @@ commands:
             echo Checking for $REQUIRED_PKG: $PKG_OK
             if [ "" = "$PKG_OK" ]; then
               echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG."
+              sudo apt-get update
               sudo apt-get --yes install $REQUIRED_PKG
             fi
             aws cloudformation delete-stack --stack-name "udacity-backend-${CIRCLE_WORKFLOW_ID}" --region ${AWS_DEFAULT_REGION}
@@ -273,7 +274,7 @@ jobs:
           name: Send migration status to kvdb.io
           command: |
             cat migrations.txt
-            if grep -q "has been executed successfully" migrations.txt; then
+            if grep -q "has been executed successfully" ~/project/backend/migrations.txt; then
               echo "success"
               curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_status -d "migrated"
             else
