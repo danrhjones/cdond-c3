@@ -2,10 +2,10 @@ URL01:
 https://github.com/danrhjones/cdond-c3
 
 URL02:
-http://udapeople-f55e249d-737e-477f-bc65-89d0c05099ac.s3-website-us-east-1.amazonaws.com
+http://udapeople-25ab46fd-3ff8-4f96-8f48-a2ed23a07dbe.s3-website-us-east-1.amazonaws.com/
 
 URL03:
 http://d1ddlrkua4hnjv.cloudfront.net/#/employees
 
 URL04
-http://3.84.248.77:3030
+http://44.201.246.24:3030
